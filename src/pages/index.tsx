@@ -1,3 +1,4 @@
+import Botao from '../components/Botao'
 import Layout from '../components/Layout'
 import Tabela from '../components/Tabela'
 import Cliente from '../core (dominios)/Cliente'
@@ -25,6 +26,11 @@ export default function Home() {
       bg-gradient-to-r from-purple-500 to-blue-600
       text-white
     `}>
+
+      <div className='flex justify-end'>
+        <Botao cor="green" className='mb-4'>Novo Cliente</Botao>
+      </div>
+  
       <Layout titulo='Cadastro Simples'>
         <Tabela clientes={clientes} 
           clienteSelecionado={clienteSelecionado}
