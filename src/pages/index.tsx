@@ -7,6 +7,13 @@ import Cliente from '../core (dominios)/Cliente'
 
 export default function Home() {
 
+  //Alternando entre Formulário e Tabela
+  const [visivel, setVisisel] = useState<'tabela' | 'form'>('tabela')//mostrar tabela por padrão
+
+  //Armazenando cliente selecionado (para edição)
+  const [cliente, setCliente] = useState<Cliente>(Cliente.vazio())
+  //Estado inicializa com cliente vazio sendo um elemento do tipo Cliente
+
   const clientes = [
     new Cliente('Ana', 20, '1'),
     new Cliente('Gustavo', 21, '2'),
@@ -15,20 +22,25 @@ export default function Home() {
   ]
 
   function clienteSelecionado(cliente: Cliente){
-    console.log(`Selecionado: ${cliente.nome}`)
+    console.log(cliente.nome)
+    setCliente(cliente)
+    setVisisel('form')
   }
 
   function clienteExcluido(cliente: Cliente){
     console.log(`Excluir: ${cliente.nome}`)
   }
 
-  function salvarCliente(cliente: Cliente){
-
+  function novoClienteButton(cliente: Cliente){
+    setCliente(Cliente.vazio())
+    setVisisel('form')
   }
 
-  //Alternando entre Formulário e Tabela
-  const [visivel, setVisisel] = useState<'tabela' | 'form'>('tabela')//mostrar tabela por padrão
+  function salvarCliente(cliente: Cliente){
+    console.log(cliente)
 
+    setVisisel('tabela')
+  }
 
   return (
     <div className={`
@@ -42,7 +54,7 @@ export default function Home() {
         {visivel === 'tabela' ? (
           <>
           <div className='flex justify-end'>
-            <Botao cor="green" className='mb-4' onClick={() => setVisisel('form')}>
+            <Botao cor="green" className='mb-4' onClick={novoClienteButton}>
               Novo Cliente
             </Botao>
           </div>
@@ -52,7 +64,7 @@ export default function Home() {
           </>
         ): (
           <Formulario 
-            cliente={clientes[0]}
+            cliente={cliente}
             clienteMudou={salvarCliente}
             cancelar={()=> setVisisel('tabela')}></Formulario>
         )}          
