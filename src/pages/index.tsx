@@ -1,11 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import ColecaoCliente from '../../backend/db/ColecaoCliente'
 import Botao from '../components/Botao'
 import Formulario from '../components/Formulario'
 import Layout from '../components/Layout'
 import Tabela from '../components/Tabela'
 import Cliente from '../core (dominios)/Cliente'
+import ClienteRepositorio from '../core (dominios)/ClienteRepositorio'
 
 export default function Home() {
+
+  //Repositório de Clientes
+  const repo: ClienteRepositorio = new ColecaoCliente()
 
   //Alternando entre Formulário e Tabela
   const [visivel, setVisisel] = useState<'tabela' | 'form'>('tabela')//mostrar tabela por padrão
@@ -14,12 +19,17 @@ export default function Home() {
   const [cliente, setCliente] = useState<Cliente>(Cliente.vazio())
   //Estado inicializa com cliente vazio sendo um elemento do tipo Cliente
 
-  const clientes = [
-    new Cliente('Ana', 20, '1'),
-    new Cliente('Gustavo', 21, '2'),
-    new Cliente('Julia', 12, '3'),
-    new Cliente('Claudia', 40, '4'),
-  ]
+  const [clientes, setClientes] = useState<Cliente[]>([])
+
+  //Altera o estado de clientes na inicialização do componente
+  useEffect(obterTodos, [])
+
+  function obterTodos(){
+    repo.obterTodos().then(clientes => {
+      setClientes(clientes)
+      setVisisel('tabela')
+    })
+  }
 
   function clienteSelecionado(cliente: Cliente){
     console.log(cliente.nome)
@@ -27,8 +37,9 @@ export default function Home() {
     setVisisel('form')
   }
 
-  function clienteExcluido(cliente: Cliente){
-    console.log(`Excluir: ${cliente.nome}`)
+  async function clienteExcluido(cliente: Cliente){
+    await repo.excluir(cliente)
+    obterTodos()
   }
 
   function novoClienteButton(cliente: Cliente){
@@ -36,10 +47,9 @@ export default function Home() {
     setVisisel('form')
   }
 
-  function salvarCliente(cliente: Cliente){
-    console.log(cliente)
-
-    setVisisel('tabela')
+  async function salvarCliente(cliente: Cliente){
+    await repo.salvar(cliente)
+    obterTodos()
   }
 
   return (
